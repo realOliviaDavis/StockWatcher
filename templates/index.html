@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockWatcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>StockWatcher</h1>
+        
+        <div class="search-box">
+            <input type="text" id="stockInput" placeholder="Enter stock symbol (e.g., AAPL)">
+            <button onclick="searchStock()">Get Price</button>
+        </div>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function searchStock() {
+            const symbol = document.getElementById('stockInput').value.toUpperCase();
+            const resultDiv = document.getElementById('result');
+            
+            if (!symbol) {
+                resultDiv.innerHTML = '<p class="error">Please enter a stock symbol</p>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            fetch(`/api/stock/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="stock-info">
+                                <h2>${data.symbol}</h2>
+                                <p class="price">$${data.price.toFixed(2)}</p>
+                                <p class="currency">${data.currency}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<p class="error">Failed to fetch stock data</p>';
+                });
+        }
+        
+        document.getElementById('stockInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchStock();
+            }
+        });
+    </script>
+</body>
+</html>
