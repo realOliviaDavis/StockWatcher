@@ -13,9 +13,11 @@
         <div class="search-box">
             <input type="text" id="stockInput" placeholder="Enter stock symbol (e.g., AAPL)">
             <button onclick="searchStock()">Get Price</button>
+            <button onclick="showHistory()" id="historyBtn" style="display:none">History</button>
         </div>
         
         <div id="result" class="result"></div>
+        <div id="history" class="history" style="display:none;"></div>
     </div>
 
     <script>
@@ -43,10 +45,41 @@
                                 <p class="currency">${data.currency}</p>
                             </div>
                         `;
+                        document.getElementById('historyBtn').style.display = 'inline-block';
                     }
                 })
                 .catch(error => {
                     resultDiv.innerHTML = '<p class="error">Failed to fetch stock data</p>';
+                });
+        }
+        
+        function showHistory() {
+            const symbol = document.getElementById('stockInput').value.toUpperCase();
+            const historyDiv = document.getElementById('history');
+            
+            historyDiv.innerHTML = '<p>Loading history...</p>';
+            historyDiv.style.display = 'block';
+            
+            fetch(`/api/history/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        historyDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                    } else {
+                        let historyHTML = `<h3>Price History for ${data.symbol}</h3><div class="history-list">`;
+                        data.history.slice(0, 10).forEach(entry => {
+                            const date = new Date(entry.timestamp).toLocaleString();
+                            historyHTML += `<div class="history-item">
+                                <span class="hist-price">$${entry.price.toFixed(2)}</span>
+                                <span class="hist-time">${date}</span>
+                            </div>`;
+                        });
+                        historyHTML += '</div>';
+                        historyDiv.innerHTML = historyHTML;
+                    }
+                })
+                .catch(error => {
+                    historyDiv.innerHTML = '<p class="error">Failed to fetch history</p>';
                 });
         }
         

@@ -80,3 +80,41 @@ button:hover {
     color: #dc3545;
     font-weight: bold;
 }
+
+.history {
+    margin-top: 30px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.history h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.history-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.hist-price {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.hist-time {
+    color: #666;
+    font-size: 0.9em;
+}
