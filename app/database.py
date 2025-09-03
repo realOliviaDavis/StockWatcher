@@ -58,3 +58,50 @@ class Database:
         results = cursor.fetchall()
         conn.close()
         return results
+    
+    def add_to_watchlist(self, symbol, target_price=None):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute(
+                'INSERT INTO watchlist (symbol, target_price) VALUES (?, ?)',
+                (symbol, target_price)
+            )
+            conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            # Symbol already exists
+            return False
+        finally:
+            conn.close()
+    
+    def get_watchlist(self):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT symbol, target_price, alert_enabled FROM watchlist ORDER BY created_at DESC')
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    
+    def remove_from_watchlist(self, symbol):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('DELETE FROM watchlist WHERE symbol = ?', (symbol,))
+        conn.commit()
+        conn.close()
+        return cursor.rowcount > 0
+    
+    def update_alert_status(self, symbol, enabled):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            'UPDATE watchlist SET alert_enabled = ? WHERE symbol = ?',
+            (enabled, symbol)
+        )
+        conn.commit()
+        conn.close()
+        return cursor.rowcount > 0

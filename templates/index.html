@@ -14,10 +14,17 @@
             <input type="text" id="stockInput" placeholder="Enter stock symbol (e.g., AAPL)">
             <button onclick="searchStock()">Get Price</button>
             <button onclick="showHistory()" id="historyBtn" style="display:none">History</button>
+            <button onclick="addToWatchlist()" id="watchlistBtn" style="display:none">Add to Watchlist</button>
         </div>
         
         <div id="result" class="result"></div>
         <div id="history" class="history" style="display:none;"></div>
+        
+        <div class="watchlist-section">
+            <h2>Watchlist</h2>
+            <div id="watchlist" class="watchlist"></div>
+            <button onclick="loadWatchlist()" class="refresh-btn">Refresh Watchlist</button>
+        </div>
     </div>
 
     <script>
@@ -46,6 +53,7 @@
                             </div>
                         `;
                         document.getElementById('historyBtn').style.display = 'inline-block';
+                        document.getElementById('watchlistBtn').style.display = 'inline-block';
                     }
                 })
                 .catch(error => {
@@ -83,11 +91,98 @@
                 });
         }
         
+        function addToWatchlist() {
+            const symbol = document.getElementById('stockInput').value.toUpperCase();
+            const targetPrice = prompt(`Enter target price for ${symbol} (optional):`);
+            
+            const payload = {
+                symbol: symbol
+            };
+            
+            if (targetPrice && !isNaN(parseFloat(targetPrice))) {
+                payload.target_price = parseFloat(targetPrice);
+            }
+            
+            fetch('/api/watchlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    alert(data.message);
+                    loadWatchlist();
+                }
+            })
+            .catch(error => {
+                alert('Failed to add to watchlist');
+            });
+        }
+        
+        function loadWatchlist() {
+            fetch('/api/watchlist')
+                .then(response => response.json())
+                .then(data => {
+                    const watchlistDiv = document.getElementById('watchlist');
+                    if (data.length === 0) {
+                        watchlistDiv.innerHTML = '<p class="empty-watchlist">No stocks in watchlist</p>';
+                        return;
+                    }
+                    
+                    let watchlistHTML = '';
+                    data.forEach(item => {
+                        watchlistHTML += `
+                            <div class="watchlist-item">
+                                <span class="symbol">${item.symbol}</span>
+                                <span class="target-price">${item.target_price ? '$' + item.target_price.toFixed(2) : 'No target'}</span>
+                                <span class="alert-status ${item.alert_enabled ? 'enabled' : 'disabled'}">
+                                    ${item.alert_enabled ? 'Alert ON' : 'Alert OFF'}
+                                </span>
+                                <button onclick="removeFromWatchlist('${item.symbol}')" class="remove-btn">Remove</button>
+                            </div>
+                        `;
+                    });
+                    watchlistDiv.innerHTML = watchlistHTML;
+                })
+                .catch(error => {
+                    document.getElementById('watchlist').innerHTML = '<p class="error">Failed to load watchlist</p>';
+                });
+        }
+        
+        function removeFromWatchlist(symbol) {
+            if (!confirm(`Remove ${symbol} from watchlist?`)) return;
+            
+            fetch(`/api/watchlist/${symbol}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    loadWatchlist();
+                }
+            })
+            .catch(error => {
+                alert('Failed to remove from watchlist');
+            });
+        }
+        
         document.getElementById('stockInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchStock();
             }
         });
+        
+        // Load watchlist on page load
+        window.onload = function() {
+            loadWatchlist();
+        };
     </script>
 </body>
 </html>

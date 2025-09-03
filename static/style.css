@@ -118,3 +118,96 @@ button:hover {
     color: #666;
     font-size: 0.9em;
 }
+
+.watchlist-section {
+    margin-top: 40px;
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.watchlist-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.watchlist {
+    margin-bottom: 15px;
+}
+
+.watchlist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.watchlist-item .symbol {
+    font-weight: bold;
+    color: #333;
+    min-width: 80px;
+}
+
+.watchlist-item .target-price {
+    color: #666;
+    min-width: 100px;
+}
+
+.alert-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+}
+
+.alert-status.enabled {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-status.disabled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.remove-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+.remove-btn:hover {
+    background-color: #c82333;
+}
+
+.refresh-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.refresh-btn:hover {
+    background-color: #218838;
+}
+
+.empty-watchlist {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
