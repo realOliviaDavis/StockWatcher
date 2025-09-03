@@ -211,3 +211,228 @@ button:hover {
     font-style: italic;
     padding: 20px;
 }
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.portfolio-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.portfolio-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.portfolio-summary {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item.positive {
+    color: #28a745;
+}
+
+.summary-item.negative {
+    color: #dc3545;
+}
+
+.portfolio-positions {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.portfolio-item {
+    background: white;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.position-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.position-header .symbol {
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.position-header .symbol:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.position-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.position-details .positive {
+    color: #28a745;
+}
+
+.position-details .negative {
+    color: #dc3545;
+}
+
+.tools-section {
+    margin-top: 40px;
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.tools-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.compare-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.compare-box input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.comparison-item {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    text-align: center;
+}
+
+.comparison-item h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    cursor: pointer;
+}
+
+.comparison-item h4:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.comparison-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.comparison-price.positive {
+    color: #28a745;
+}
+
+.comparison-price.negative {
+    color: #dc3545;
+}
+
+.comparison-market, .comparison-change {
+    font-size: 0.9em;
+    color: #666;
+    margin: 4px 0;
+}
+
+.market-state {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+.prev-close {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+.positive {
+    color: #28a745;
+}
+
+.negative {
+    color: #dc3545;
+}
+
+.loading {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.clickable-symbol {
+    cursor: pointer;
+}
+
+.clickable-symbol:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.empty-portfolio {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    .compare-box {
+        flex-direction: column;
+    }
+}

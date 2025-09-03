@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StockWatcher</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
 </head>
 <body>
     <div class="container">
@@ -12,18 +13,36 @@
         
         <div class="search-box">
             <input type="text" id="stockInput" placeholder="Enter stock symbol (e.g., AAPL)">
-            <button onclick="searchStock()">Get Price</button>
-            <button onclick="showHistory()" id="historyBtn" style="display:none">History</button>
-            <button onclick="addToWatchlist()" id="watchlistBtn" style="display:none">Add to Watchlist</button>
+            <button onclick="dashboard.searchStock()">Get Price</button>
+            <button onclick="dashboard.showHistory()" id="historyBtn" style="display:none">History</button>
+            <button onclick="dashboard.addToWatchlist()" id="watchlistBtn" style="display:none">Add to Watchlist</button>
+            <button onclick="dashboard.addToPortfolio()" id="portfolioBtn" style="display:none">Add to Portfolio</button>
         </div>
         
         <div id="result" class="result"></div>
         <div id="history" class="history" style="display:none;"></div>
         
-        <div class="watchlist-section">
-            <h2>Watchlist</h2>
-            <div id="watchlist" class="watchlist"></div>
-            <button onclick="loadWatchlist()" class="refresh-btn">Refresh Watchlist</button>
+        <div class="dashboard-grid">
+            <div class="watchlist-section">
+                <h2>Watchlist</h2>
+                <div id="watchlist" class="watchlist"></div>
+                <button onclick="dashboard.loadWatchlist()" class="refresh-btn">Refresh Watchlist</button>
+            </div>
+            
+            <div class="portfolio-section">
+                <h2>Portfolio</h2>
+                <div id="portfolio" class="portfolio"></div>
+                <button onclick="dashboard.loadPortfolio()" class="refresh-btn">Refresh Portfolio</button>
+            </div>
+        </div>
+        
+        <div class="tools-section">
+            <h2>Stock Comparison Tool</h2>
+            <div class="compare-box">
+                <input type="text" id="compareInput" placeholder="Enter symbols separated by commas (e.g., AAPL,GOOGL,MSFT)">
+                <button onclick="compareStocks()">Compare Stocks</button>
+            </div>
+            <div id="comparison" class="comparison" style="display:none;"></div>
         </div>
     </div>
 
@@ -179,10 +198,60 @@
             }
         });
         
-        // Load watchlist on page load
-        window.onload = function() {
-            loadWatchlist();
-        };
+        function compareStocks() {
+            const input = document.getElementById('compareInput').value.trim();
+            if (!input) {
+                alert('Please enter stock symbols');
+                return;
+            }
+            
+            const comparisonDiv = document.getElementById('comparison');
+            comparisonDiv.innerHTML = '<p class="loading">Loading comparison...</p>';
+            comparisonDiv.style.display = 'block';
+            
+            fetch(`/api/compare?symbols=${encodeURIComponent(input)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        comparisonDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                    } else {
+                        displayComparison(data, comparisonDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Compare error:', error);
+                    comparisonDiv.innerHTML = '<p class="error">Failed to compare stocks</p>';
+                });
+        }
+        
+        function displayComparison(data, container) {
+            let comparisonHTML = '<h3>Stock Comparison</h3><div class="comparison-grid">';
+            
+            Object.entries(data).forEach(([symbol, stockData]) => {
+                const changeIndicator = stockData.previous_close ? 
+                    (stockData.price > stockData.previous_close ? '↗' : '↘') : '';
+                const changeClass = stockData.previous_close ? 
+                    (stockData.price > stockData.previous_close ? 'positive' : 'negative') : '';
+                
+                comparisonHTML += `
+                    <div class="comparison-item">
+                        <h4 onclick="dashboard.quickSearch('${symbol}')" class="clickable-symbol">${symbol}</h4>
+                        <p class="comparison-price ${changeClass}">$${stockData.price.toFixed(2)} ${changeIndicator}</p>
+                        <p class="comparison-market">${stockData.market_state}</p>
+                        ${stockData.previous_close ? `<p class="comparison-change">Prev: $${stockData.previous_close.toFixed(2)}</p>` : ''}
+                    </div>
+                `;
+            });
+            
+            comparisonHTML += '</div>';
+            container.innerHTML = comparisonHTML;
+        }
+        
+        document.getElementById('compareInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                compareStocks();
+            }
+        });
     </script>
 </body>
 </html>
